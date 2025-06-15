@@ -1,5 +1,10 @@
 {
-  "medications": [],
+  "medications": [
+    {
+      "name": "Pregabalin (150mg)",
+      "doses_per_day": 2
+    }
+  ],
   "2025-06-13": {
     "exercises": {
       "Scapula pull (3 secs)": {

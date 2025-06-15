@@ -1,9 +1,9 @@
-from datetime import datetime
 import os
 from data_io import load_json, load_daily_data, save_daily_data
 from visualize import display_entries
 from prompts import prompt_yes_no, prompt_mood, prompt_pain, prompt_diary_entry, prompt_new_medication
 from tracker import prompt_exercise_data, prompt_meditation, prompt_time_based_data_full, prompt_medication_data
+from datetime import datetime
 
 def show_todays_data():
     date_str = datetime.now().strftime("%Y-%m-%d")
