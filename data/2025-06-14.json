@@ -1,0 +1,40 @@
+{
+  "exercises": {
+    "Scapula pull (3 secs)": {
+      "repeats": 10,
+      "sets": 1
+    },
+    "Shoulder Shrug (downward arm extension)": {
+      "repeats": 10,
+      "sets": 1
+    },
+    "Grip Rotation (500g)": {
+      "repeats": 10,
+      "sets": 1
+    },
+    "Thoracic ext w/ foam roller": {
+      "repeats": 10,
+      "sets": 2
+    },
+    "Wall Roller Shoulder Flexion": {
+      "repeats": 10,
+      "sets": 1
+    },
+    "Diagonal Cervical Neck Tilt (RHS)": {
+      "repeats": 10,
+      "sets": 2
+    }
+  },
+  "meditation": true,
+  "mood": "came and a little bit nervous",
+  "pain": 1,
+  "time_based": {
+    "Driving": 3.0,
+    "Guitar": 0,
+    "Piano": 0,
+    "Computer Training": 0.0,
+    "Total Computer Use": 4.0,
+    "Band": 2.0
+  },
+  "diary_entry": "Through the morning until the afternoon paine was pretty good then I had a gig well one of the members was a bit late so we were really frantic to get onstage so ended up moving a bit of stuff and I also played tambourine and bruised my hand a little bit so I was a bit sore by the time I finish playing. There were some burning in the fingers that lasted about an hour or so and I also bruised my palm a little bit. I'm thinking of getting a mounted tambourine so I can hit it with a drumstick."
+}

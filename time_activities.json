@@ -1,0 +1,20 @@
+{
+  "Driving": {
+    "type": "minutes"
+  },
+  "Guitar": {
+    "type": "minutes"
+  },
+  "Piano": {
+    "type": "minutes"
+  },
+  "Computer Training": {
+    "type": "minutes"
+  },
+  "Total Computer Use": {
+    "type": "hours"
+  },
+  "Band": {
+    "type": "hours"
+  }
+}

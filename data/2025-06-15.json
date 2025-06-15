@@ -1,0 +1,40 @@
+{
+  "exercises": {
+    "Scapula pull (3 secs)": {
+      "repeats": 10,
+      "sets": 1
+    },
+    "Shoulder Shrug (downward arm extension)": {
+      "repeats": 10,
+      "sets": 1
+    },
+    "Grip Rotation (500g)": {
+      "repeats": 0,
+      "sets": 0
+    },
+    "Thoracic ext w/ foam roller": {
+      "repeats": 10,
+      "sets": 1
+    },
+    "Wall Roller Shoulder Flexion": {
+      "repeats": 10,
+      "sets": 1
+    },
+    "Diagonal Cervical Neck Tilt (RHS)": {
+      "repeats": 10,
+      "sets": 1
+    }
+  },
+  "meditation": false,
+  "mood": "nervous but content",
+  "pain": 4,
+  "time_based": {
+    "Driving": 0.0,
+    "Guitar": 8.0,
+    "Piano": 0,
+    "Computer Training": 0,
+    "Total Computer Use": 6.0,
+    "Band": 0
+  },
+  "diary_entry": ""
+}
