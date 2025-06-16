@@ -16,5 +16,8 @@
   },
   "Band": {
     "type": "hours"
+  },
+  "distance traveled": {
+    "type": "kilometers"
   }
 }

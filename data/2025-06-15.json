@@ -9,8 +9,8 @@
       "sets": 1
     },
     "Grip Rotation (500g)": {
-      "repeats": 0,
-      "sets": 0
+      "repeats": 10,
+      "sets": 1
     },
     "Thoracic ext w/ foam roller": {
       "repeats": 10,
@@ -25,17 +25,21 @@
       "sets": 1
     }
   },
-  "meditation": false,
+  "meditation": true,
   "mood": "nervous but content",
-  "pain": 4,
+  "pain": 5,
   "time_based": {
-    "Driving": 0.0,
+    "Driving": 0,
     "Guitar": 8.0,
     "Piano": 0,
     "Computer Training": 0,
-    "Total Computer Use": 6.0,
-    "Band": 0
+    "Total Computer Use": 0,
+    "Band": 0,
+    "distance traveled": 7.44
   },
-  "diary_entry": "",
-  "medications": {}
+  "medications": {
+    "Pregabalin (150mg)": 2,
+    "Palexia IR (50mg)": 1,
+    "Palexia SR (100mg)": 1
+  }
 }

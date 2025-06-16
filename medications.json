@@ -1,0 +1,16 @@
+{
+  "medications": [
+    {
+      "name": "Pregabalin (150mg)",
+      "doses_per_day": 2
+    },
+    {
+      "name": "Palexia IR (50mg)",
+      "doses_per_day": 1
+    },
+    {
+      "name": "Palexia SR (100mg)",
+      "doses_per_day": 1
+    }
+  ]
+}

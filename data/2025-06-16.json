@@ -14,7 +14,7 @@
     },
     "Thoracic ext w/ foam roller": {
       "repeats": 10,
-      "sets": 2
+      "sets": 1
     },
     "Wall Roller Shoulder Flexion": {
       "repeats": 10,
@@ -22,24 +22,24 @@
     },
     "Diagonal Cervical Neck Tilt (RHS)": {
       "repeats": 10,
-      "sets": 2
+      "sets": 1
     }
   },
-  "meditation": true,
-  "mood": "came and a little bit nervous",
-  "pain": 1,
+  "meditation": false,
+  "mood": "happy",
+  "pain": 5,
   "time_based": {
-    "Driving": 3.0,
-    "Guitar": 0,
-    "Piano": 0,
+    "Driving": 0.0,
+    "Guitar": 0.0,
+    "Piano": 0.0,
     "Computer Training": 0.0,
-    "Total Computer Use": 4.0,
-    "Band": 2.0,
-    "distance traveled": 7.32
+    "Total Computer Use": 3.0,
+    "Band": 0,
+    "distance traveled": 1.61
   },
   "medications": {
     "Pregabalin (150mg)": 2,
     "Palexia IR (50mg)": 0,
-    "Palexia SR (100mg)": 0
+    "Palexia SR (100mg)": 1
   }
 }

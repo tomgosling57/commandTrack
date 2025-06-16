@@ -50,27 +50,26 @@ def save_daily_data(date_str: str, data: Dict[str, Any]) -> None:
     filepath = os.path.join(DATA_DIR, f"{date_str}.json")
     save_json(filepath, data)
 
-def load_medications(filename: str = "data.json") -> Optional[Dict[str, Any]]:
+def load_medications(filename: str = "medications.json") -> Optional[Dict[str, Any]]:
     """Load medications data from file.
     
     Args:
         filename: Path to JSON file containing medications
         
     Returns:
-        Medications data or None if not found
+        List of medication objects or None if not found
     """
     data = load_json(filename)
     return data.get("medications") if data else None
 
-def save_medications(medications: Dict[str, Any], filename: str = "data.json") -> None:
+def save_medications(medications: Dict[str, Any], filename: str = "medications.json") -> None:
     """Save medications data to file.
     
     Args:
         medications: Medications data to save
         filename: Path to save file
     """
-    data = load_json(filename) or {}
-    data["medications"] = medications
+    data = {"medications": medications}
     save_json(filename, data)
 
 # Initialize data directory if it doesn't exist

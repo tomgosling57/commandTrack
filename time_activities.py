@@ -38,11 +38,11 @@ def add_new_time_activity(time_based_activities: Dict[str, Any]) -> None:
             continue
         
         while True:
-            typ = input("Enter type (minutes, hours, yes/no, scale): ").strip().lower()
-            if typ in ["minutes", "hours", "yes/no", "scale"]:
+            typ = input("Enter type (minutes, hours, yes/no, scale, kilometers): ").strip().lower()
+            if typ in ["minutes", "hours", "yes/no", "scale", "kilometers"]:
                 break
             else:
-                print("Invalid type. Please enter one of: minutes, hours, yes/no, scale.")
+                print("Invalid type. Please enter one of: minutes, hours, yes/no, scale, kilometers.")
         
         extra_info = None
         if typ == "scale":

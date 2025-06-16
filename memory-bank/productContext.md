@@ -18,5 +18,11 @@ This file provides a high-level overview of the project and the expected product
 ## Overall Architecture
 
 *   Data is stored in JSON files in the `data/` directory.
-*   `tracker.py` handles data input and storage.
+*   `data_io.py` handles reading from and writing to JSON data files.
+*   `prompts.py` handles user input and prompts.
+*   `menu.py` manages the main application menu and navigation.
+*   `tracker.py` orchestrates daily data input and interacts with `prompts.py` and `data_io.py`.
+*   `diary.py` manages diary entries.
+*   `exercises.py` manages exercise data.
+*   `time_activities.py` manages time-based activity data.
 *   `visualize.py` handles data visualization.

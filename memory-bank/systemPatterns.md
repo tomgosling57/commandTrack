@@ -10,10 +10,13 @@ It is optional, but recommended to be updated as the project evolves.
 
 *   Use of Python for data processing and storage.
 *   Use of JSON for data serialization.
+*   Modular design with distinct files for different functionalities (e.g., `prompts.py`, `data_io.py`, `diary.py`, `tracker.py`, `menu.py`).
 
 ## Architectural Patterns
 
-*   Data is stored in separate files for each day.
+*   Data is stored in separate JSON files for each day within the `data/` directory.
+*   Centralized data input and management through `tracker.py`.
+*   Menu-driven interaction via `menu.py`.
 
 ## Testing Patterns
 
