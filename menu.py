@@ -1,7 +1,7 @@
 import os
 from data_io import load_json, load_daily_data, save_daily_data
 from diary import get_diary_entry, save_diary_entry
-from visualize import display_entries
+from visualize import display_entries, display_weekly_summary
 from prompts import prompt_yes_no, prompt_mood, prompt_pain, prompt_new_medication, prompt_exercise_data, prompt_meditation, prompt_time_based_data_full, prompt_medication_data
 from diary import prompt_diary_entry
 from exercises import add_new_exercise
@@ -133,8 +133,9 @@ def main():
         print(" 4 - Add/Manage medications")
         print(" 5 - Modify past/future date")
         print(" 6 - View all diary entries")
-        print(" 7 - Exit")
-        choice = input("Select option (1-7): ").strip()
+        print(" 7 - Visualize weekly data")
+        print(" 8 - Exit")
+        choice = input("Select option (1-8): ").strip()
         if choice == "1":
             modify_past_future_data(datetime.now().strftime("%Y-%m-%d"))
 
@@ -164,7 +165,9 @@ def main():
         elif choice == "6":
             view_all_diary_entries()
         elif choice == "7":
+            display_weekly_summary()
+        elif choice == "8":
             print("Goodbye!")
             break
         else:
-            print("Invalid option. Please select 1-7.")
+            print("Invalid option. Please select 1-8.")

@@ -27,3 +27,7 @@ This file tracks the project's progress using a task list format.
 *   Review and update `productContext.md` to reflect current architecture.
 *   Review `systemPatterns.md` for new patterns.
 *   Review `decisionLog.md` for any unlogged decisions.
+
+[2025-06-16 14:10:17] - Implemented new script to visualize data for the last seven days, with separate tables for exercises, pain and mood, time-based activities, and medication. Added a new menu option in `menu.py` to access this feature.
+
+[2025-06-16 14:18:01] - Modified weekly visualization in `visualize.py` to display a consolidated table with data values of each field over the days of the week, enabling pattern analysis for pain in relation to exercises and other activities.

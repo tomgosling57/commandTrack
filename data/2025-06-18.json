@@ -25,21 +25,21 @@
       "sets": 1
     }
   },
-  "meditation": false,
-  "mood": "happy",
-  "pain": 5,
+  "meditation": 0,
+  "mood": "",
+  "pain": 0,
   "time_based": {
-    "Driving": 0.0,
-    "Guitar": 0.0,
-    "Piano": 0.0,
-    "Computer Training": 0.0,
-    "Total Computer Use": 3.0,
+    "Driving": 0,
+    "Guitar": 0,
+    "Piano": 0,
+    "Computer Training": 0,
+    "Total Computer Use": 0,
     "Band": 0,
-    "distance traveled": 4.17
+    "distance traveled": 0
   },
   "medications": {
-    "Pregabalin (150mg)": 2,
+    "Pregabalin (150mg)": 0,
     "Palexia IR (50mg)": 0,
-    "Palexia SR (100mg)": 1
+    "Palexia SR (100mg)": 0
   }
 }
