@@ -2,7 +2,8 @@ import os
 import json
 from tabulate import tabulate
 from datetime import datetime, timedelta
-from data_io import load_daily_data, load_medications
+from data_io import load_daily_data, load_medications, load_json
+from playwright.sync_api import sync_playwright
 
 DATA_DIR = "data"
 TIME_ACTIVITIES_FILE = "time_activities.json"
@@ -87,31 +88,30 @@ def get_last_seven_days_data():
         current_date += timedelta(days=1)
     return weekly_data
 
-def display_weekly_summary():
-    """Displays a consolidated summary of data for the last seven days."""
-    print("\n=== Weekly Summary (Last 7 Days) ===")
+def get_weekly_summary_html_table():
+    """Generates a consolidated summary of data for the last seven days as an HTML string."""
     weekly_data = get_last_seven_days_data()
 
     if not weekly_data:
-        print("No data found for the last 7 days.")
-        return
+        return "<p>No data found for the last 7 days.</p>"
 
-    # Get dates for the last 7 days
     today = datetime.now()
     dates = [(today - timedelta(days=i)).strftime("%Y-%m-%d") for i in range(6, -1, -1)]
 
-    # Initialize data structures for the consolidated table
-    table_data = {}
+    mood_pain_meditation_medication_data = {
+        "Mood": ["N/A"] * 7,
+        "Pain": ["N/A"] * 7,
+        "Meditation": ["N/A"] * 7,
+    }
+    
     all_exercises = set()
     all_time_activities = set()
     all_medications = set()
 
-    # Populate initial rows for Mood, Pain, Meditation
-    table_data["Mood"] = ["N/A"] * 7
-    table_data["Pain"] = ["N/A"] * 7
-    table_data["Meditation"] = ["N/A"] * 7
+    # Load diary entries from the separate file
+    diary_entries_from_file = load_json(os.path.join(DATA_DIR, "diary_entries.json")) or {}
+    diary_entries_data = {}
 
-    # Collect all unique exercises, time-based activities, and medications
     for date_str in dates:
         data = weekly_data.get(date_str, {})
         if "exercises" in data:
@@ -120,59 +120,197 @@ def display_weekly_summary():
             all_time_activities.update(data["time_based"].keys())
         if "medications" in data:
             all_medications.update(data["medications"].keys())
+        
+        # Populate diary_entries_data from the loaded file
+        diary_entries_data[date_str] = diary_entries_from_file.get(date_str, "No entry")
 
-    # Initialize rows for exercises, time-based activities, and medications
-    for ex_name in sorted(list(all_exercises)):
-        table_data[f"Exercise: {ex_name} (Repeats)"] = [0] * 7
-        table_data[f"Exercise: {ex_name} (Sets)"] = [0] * 7
-    for activity in sorted(list(all_time_activities)):
-        table_data[f"Time: {activity}"] = ["N/A"] * 7
+
     for med_name in sorted(list(all_medications)):
-        table_data[f"Medication: {med_name} (Doses)"] = [0] * 7
+        mood_pain_meditation_medication_data[f"Medication: {med_name} (Doses)"] = [0] * 7
 
-    # Populate data for each day
+    time_activities_table_data = {}
+    for activity in sorted(list(all_time_activities)):
+        time_activities_table_data[f"Time: {activity}"] = ["N/A"] * 7
+
+    exercises_table_data = {}
+    for ex_name in sorted(list(all_exercises)):
+        exercises_table_data[f"Exercise: {ex_name} (Repeats)"] = [0] * 7
+        exercises_table_data[f"Exercise: {ex_name} (Sets)"] = [0] * 7
+
     for i, date_str in enumerate(dates):
         data = weekly_data.get(date_str, {})
 
-        # Mood & Pain
         mood = data.get("mood")
         if mood is not None:
-            table_data["Mood"][i] = mood
+            mood_pain_meditation_medication_data["Mood"][i] = mood
         
         pain = data.get("pain")
         if pain is not None:
             pain_desc = PAIN_SCALE.get(pain, '') if isinstance(pain, int) else ''
-            table_data["Pain"][i] = f"{pain} - {pain_desc}"
+            mood_pain_meditation_medication_data["Pain"][i] = f"{pain} - {pain_desc}"
         
         meditation = data.get("meditation")
         if meditation is not None:
-            table_data["Meditation"][i] = "Yes" if meditation else "No"
+            mood_pain_meditation_medication_data["Meditation"][i] = "Yes" if meditation else "No"
 
-        # Exercises
-        if "exercises" in data:
-            for ex_name, ex_data in data["exercises"].items():
-                table_data[f"Exercise: {ex_name} (Repeats)"][i] = ex_data.get("repeats", 0)
-                table_data[f"Exercise: {ex_name} (Sets)"][i] = ex_data.get("sets", 0)
+        if "medications" in data:
+            for med_name, doses_taken in data["medications"].items():
+                mood_pain_meditation_medication_data[f"Medication: {med_name} (Doses)"][i] = doses_taken
 
-        # Time-based Activities
         time_activities_config = load_time_activities()
         if "time_based" in data:
             for activity, value in data["time_based"].items():
                 unit = time_activities_config.get(activity, {}).get('type', '')
-                table_data[f"Time: {activity}"][i] = f"{value} {unit}".strip()
+                time_activities_table_data[f"Time: {activity}"][i] = f"{value} {unit}".strip()
 
-        # Medications
-        if "medications" in data:
-            for med_name, doses_taken in data["medications"].items():
-                table_data[f"Medication: {med_name} (Doses)"][i] = doses_taken
-
-    # Prepare for tabulate
+        if "exercises" in data:
+            for ex_name, ex_data in data["exercises"].items():
+                exercises_table_data[f"Exercise: {ex_name} (Repeats)"][i] = ex_data.get("repeats", 0)
+                exercises_table_data[f"Exercise: {ex_name} (Sets)"][i] = ex_data.get("sets", 0)
+        
     headers = ["Field"] + dates
-    tabulate_data = []
-    for field, values in table_data.items():
-        tabulate_data.append([field] + values)
+    
+    html_content = ""
 
-    print(tabulate(tabulate_data, headers=headers, tablefmt="grid"))
+    # Mood, Pain, Meditation, Medication Table
+    html_content += "<h2>Mood, Pain, Meditation & Medication</h2>"
+    html_content += "<table border='1' style='width:100%; border-collapse: collapse; margin-bottom: 2em;'>"
+    html_content += "<tbody>"
+    html_content += "<tr>"
+    html_content += "<th style='width: 20%;'>Field</th>" # Adjusted width for field names
+    for header in headers[1:]:
+        html_content += f"<th style='width: 11.4%;'>{header}</th>" # Adjusted for 7 columns (80% / 7)
+    html_content += "</tr>"
+    for field, values in mood_pain_meditation_medication_data.items():
+        html_content += "<tr>"
+        html_content += f"<td>{field}</td>"
+        for value in values:
+            html_content += f"<td>{value}</td>"
+        html_content += "</tr>"
+    html_content += "</tbody></table>"
+
+    # Time-based Activities Table
+    if time_activities_table_data:
+        html_content += "<h2>Time-based Activities</h2>"
+        html_content += "<table border='1' style='width:100%; border-collapse: collapse; margin-bottom: 2em;'>"
+        html_content += "<tbody>"
+        html_content += "<tr>"
+        html_content += "<th style='width: 20%;'>Activity</th>" # Adjusted width for activity names
+        for header in headers[1:]:
+            html_content += f"<th style='width: 11.4%;'>{header}</th>" # Adjusted for 7 columns (80% / 7)
+        html_content += "</tr>"
+        for field, values in time_activities_table_data.items():
+            html_content += "<tr>"
+            html_content += f"<td>{field}</td>"
+            for value in values:
+                html_content += f"<td>{value}</td>"
+            html_content += "</tr>"
+        html_content += "</tbody></table>"
+
+    # Exercises Table
+    if exercises_table_data:
+        html_content += "<h2>Exercises</h2>"
+        html_content += "<table border='1' style='width:100%; border-collapse: collapse; margin-bottom: 2em;'>"
+        html_content += "<tbody>"
+        html_content += "<tr>"
+        html_content += "<th style='width: 20%;'>Exercise</th>" # Adjusted width for exercise names
+        for header in headers[1:]:
+            html_content += f"<th style='width: 11.4%;'>{header}</th>" # Adjusted for 7 columns (80% / 7)
+        html_content += "</tr>"
+        for field, values in exercises_table_data.items():
+            html_content += "<tr>"
+            html_content += f"<td>{field}</td>"
+            for value in values:
+                html_content += f"<td>{value}</td>"
+            html_content += "</tr>"
+        html_content += "</tbody></table>"
+
+    # Diary Entries
+    html_content += "<h2>Diary Entries</h2>"
+    html_content += "<table class='diary-table' border='1' style='width:100%; border-collapse: collapse; margin-bottom: 2em;'>"
+    html_content += "<tbody>"
+    html_content += "<tr>"
+    html_content += "<th style='width: 15%;'>Date</th><th style='width: 85%;'>Entry</th>" # No change needed for diary table
+    html_content += "</tr>"
+    for date_str in dates:
+        entry = diary_entries_data.get(date_str, "No entry")
+        html_content += f"<tr><td>{date_str}</td><td><p>{entry}</p></td></tr>"
+    html_content += "</tbody></table>"
+    
+    return html_content
+
+def generate_weekly_report():
+    """Generates a weekly report and writes it to an HTML file."""
+    html_content = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Weekly Report</title>
+        <style>
+            body {{ font-family: sans-serif; margin: 2cm; font-size: 12px; }}
+            h1 {{ text-align: center; }}
+            .table-container {{ max-width: 21cm; /* A4 width approx */ overflow-x: auto; margin: 0 auto; }}
+            table {{
+                width: 100%;
+                border-collapse: collapse;
+                margin-bottom: 1em;
+                /* page-break-inside: avoid; Keep table on one page if possible */
+                table-layout: fixed; /* Crucial for predictable column widths */
+            }}
+            th, td {{
+                border: 1px solid #ccc;
+                padding: 8px;
+                text-align: left;
+                page-break-inside: auto; /* Allow content within cells to break across pages */
+                page-break-after: auto; /* Allow page break after cell if needed */
+                overflow-wrap: break-word; /* Modern word wrapping */
+                word-wrap: break-word; /* Fallback for older browsers/wkhtmltopdf */
+                white-space: normal; /* Ensure text wraps normally */
+                min-width: 50px; /* Prevent columns from becoming too narrow */
+                max-width: 150px; /* Set a maximum width for field values */
+            }}
+            tr {{
+                /* page-break-inside: avoid; Keep rows on one page if possible */
+                page-break-after: auto; /* Allow a page break after a row if needed */
+            }}
+            thead {{
+                display: table-header-group; /* Repeat table headers on each page */
+            }}
+            th {{ background-color: #f2f2f2; }}
+            .diary-table td p {{
+                page-break-inside: auto; /* Allow paragraphs within diary cells to break */
+                word-wrap: break-word;
+                white-space: pre-wrap;
+            }}
+        </style>
+    </head>
+    <body>
+        <h1>Weekly Summary (Last 7 Days)</h1>
+        <div class="table-container">
+            {get_weekly_summary_html_table()}
+        </div>
+    </body>
+    </html>
+    """
+    
+    html_report_filename = "weekly_report.html"
+    pdf_report_filename = "weekly_report.pdf"
+
+    with open(html_report_filename, "w") as f:
+        f.write(html_content)
+    print(f"Weekly HTML report generated and saved to {html_report_filename}")
+
+    # Convert HTML to PDF using Playwright
+    try:
+        with sync_playwright() as p:
+            browser = p.chromium.launch()
+            page = browser.new_page()
+            page.set_content(html_content)
+            page.pdf(path=pdf_report_filename)
+            browser.close()
+        print(f"Weekly PDF report generated and saved to {pdf_report_filename}")
+    except Exception as e:
+        print(f"Error generating PDF with Playwright: {e}")
 
 def main():
     if not os.path.exists(DATA_DIR):
@@ -184,7 +322,7 @@ def main():
         print("No daily data found.")
         return
 
-    display_entries(entries)
+    generate_weekly_report()
 
 if __name__ == "__main__":
     main()
